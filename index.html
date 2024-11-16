@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screen Recorder</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Gravador de Tela</h1>
+    </header>
+    <main>
+      <video id="screenVideo" autoplay muted></video>
+      <div class="controls">
+        <button id="startCapture">Iniciar</button>
+        <button id="stopCapture" disabled>Parar</button>
+        <button id="download" disabled>Baixar</button>
+      </div>
+    </main>
+    <footer>
+      <p>Feito para capturar a tela diretamente do navegador.</p>
+    </footer>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
