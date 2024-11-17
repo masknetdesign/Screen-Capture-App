@@ -3,20 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gravação de Tela</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Gravação de Webcam</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    video {
+      width: 100%;
+      max-width: 500px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+    }
+
+    a {
+      display: none;
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>Gravação de Tela</h1>
+    <h1>Gravação de Webcam</h1>
     <video id="videoElement" autoplay muted></video>
     <div class="controls">
       <button id="startBtn">Iniciar Gravação</button>
       <button id="stopBtn" disabled>Parar Gravação</button>
-      <a id="downloadLink" href="#" download="screen-recording.webm">Baixar Gravação</a>
+      <a id="downloadLink" href="#" download="webcam-recording.webm">Baixar Gravação</a>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    let mediaRecorder;
+    let recordedChunks = [];
+    let stream;
+
+    const videoElement = document.getElementById('videoElement');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const downloadLink = document.getElementById('downloadLink');
+
+    // Função para iniciar a gravação
+    async function startRecording() {
+      try {
+        // Solicita permissão para capturar vídeo e áudio
+        const userMediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { width: 1280, height: 720 },
+          audio: true
+        });
+
+        // Exibe o vídeo ao vivo na tag <video>
+        videoElement.srcObject = userMediaStream;
+
+        // Cria o MediaRecorder para gravar o stream
+        mediaRecorder = new MediaRecorder(userMediaStream, {
+          mimeType: 'video/webm;codecs=vp8,opus'
+        });
+
+        // Evento para armazenar os chunks de vídeo gravados
+        mediaRecorder.ondataavailable = function(event) {
+          recordedChunks.push(event.data);
+        };
+
+        // Quando a gravação terminar, cria um link de download para o vídeo
+        mediaRecorder.onstop = function() {
+          const blob = new Blob(recordedChunks, {
+            type: 'video/webm'
+          });
+          const url = URL.createObjectURL(blob);
+          downloadLink.href = url;
+          downloadLink.style.display = 'inline-block';
+          recordedChunks = [];
+        };
+
+        // Inicia a gravação
+        mediaRecorder.start();
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        console.log('Gravação iniciada');
+      } catch (error) {
+        console.error('Erro ao iniciar a gravação: ', error);
+        alert('Falha ao capturar a webcam ou permissão negada.');
+      }
+    }
+
+    // Função para parar a gravação
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+
+      // Parando todos os tracks
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      console.log('Gravação parada');
+    }
+
+    // Adiciona event listeners aos botões
+    startBtn.addEventListener('click', startRecording);
+    stopBtn.addEventListener('click', stopRecording);
+  </script>
 </body>
 </html>
