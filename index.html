@@ -1,28 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Screen Recorder</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Gravação de Tela</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1>Gravador de Tela</h1>
-    </header>
-    <main>
-      <video id="screenVideo" autoplay muted></video>
-      <div class="controls">
-        <button id="startCapture">Iniciar</button>
-        <button id="stopCapture" disabled>Parar</button>
-        <button id="download" disabled>Baixar</button>
-      </div>
-    </main>
-    <footer>
-      <p>Feito para capturar a tela diretamente do navegador.</p>
-    </footer>
+    <h1>Gravação de Tela</h1>
+    <video id="videoElement" autoplay muted></video>
+    <div class="controls">
+      <button id="startBtn">Iniciar Gravação</button>
+      <button id="stopBtn" disabled>Parar Gravação</button>
+      <a id="downloadLink" href="#" download="screen-recording.webm">Baixar Gravação</a>
+    </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
